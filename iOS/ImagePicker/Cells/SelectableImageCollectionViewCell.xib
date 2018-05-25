@@ -6,6 +6,7 @@
     <dependencies>
         <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14088"/>
+        <capability name="Constraints with non-1.0 multipliers" minToolsVersion="5.1"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
@@ -19,10 +20,14 @@
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
                     <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="missing" translatesAutoresizingMaskIntoConstraints="NO" id="Pxe-Sy-uR2">
-                        <rect key="frame" x="0.0" y="0.0" width="152" height="140"/>
+                        <rect key="frame" x="16" y="16" width="120" height="108"/>
                     </imageView>
+                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="nms-9G-ObC">
+                        <rect key="frame" x="16" y="16" width="120" height="43.5"/>
+                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                    </view>
                     <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="circle_unchecked" translatesAutoresizingMaskIntoConstraints="NO" id="0kR-Za-Wah">
-                        <rect key="frame" x="8" y="8" width="24" height="24"/>
+                        <rect key="frame" x="6" y="6" width="24" height="24"/>
                         <constraints>
                             <constraint firstAttribute="width" constant="24" id="On0-bK-1bu"/>
                             <constraint firstAttribute="height" constant="24" id="fse-l1-HkW"/>
@@ -30,15 +35,29 @@
                     </imageView>
                 </subviews>
             </view>
+            <color key="backgroundColor" white="0.94999999999999996" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
             <constraints>
-                <constraint firstAttribute="trailing" secondItem="Pxe-Sy-uR2" secondAttribute="trailing" id="7s8-Jr-XDP"/>
-                <constraint firstItem="0kR-Za-Wah" firstAttribute="leading" secondItem="cZE-iV-UFb" secondAttribute="leading" constant="8" id="NCH-mi-Hjj"/>
-                <constraint firstAttribute="bottom" secondItem="Pxe-Sy-uR2" secondAttribute="bottom" id="Vrh-U3-Ao4"/>
-                <constraint firstItem="Pxe-Sy-uR2" firstAttribute="leading" secondItem="cZE-iV-UFb" secondAttribute="leading" id="XBT-a3-Nfh"/>
-                <constraint firstItem="0kR-Za-Wah" firstAttribute="top" secondItem="cZE-iV-UFb" secondAttribute="top" constant="8" id="bCU-9R-LXe"/>
-                <constraint firstItem="Pxe-Sy-uR2" firstAttribute="top" secondItem="cZE-iV-UFb" secondAttribute="top" id="nfT-sA-q4e"/>
+                <constraint firstAttribute="trailing" secondItem="Pxe-Sy-uR2" secondAttribute="trailing" constant="16" id="7s8-Jr-XDP"/>
+                <constraint firstItem="0kR-Za-Wah" firstAttribute="leading" secondItem="cZE-iV-UFb" secondAttribute="leading" constant="6" id="NCH-mi-Hjj"/>
+                <constraint firstItem="nms-9G-ObC" firstAttribute="top" secondItem="Pxe-Sy-uR2" secondAttribute="top" id="RBV-He-xWx"/>
+                <constraint firstAttribute="bottom" secondItem="Pxe-Sy-uR2" secondAttribute="bottom" constant="16" id="Vrh-U3-Ao4"/>
+                <constraint firstItem="Pxe-Sy-uR2" firstAttribute="leading" secondItem="cZE-iV-UFb" secondAttribute="leading" constant="16" id="XBT-a3-Nfh"/>
+                <constraint firstItem="0kR-Za-Wah" firstAttribute="top" secondItem="cZE-iV-UFb" secondAttribute="top" constant="6" id="bCU-9R-LXe"/>
+                <constraint firstItem="nms-9G-ObC" firstAttribute="trailing" secondItem="Pxe-Sy-uR2" secondAttribute="trailing" id="hfa-qi-3Ce"/>
+                <constraint firstItem="Pxe-Sy-uR2" firstAttribute="top" secondItem="cZE-iV-UFb" secondAttribute="top" constant="16" id="nfT-sA-q4e"/>
+                <constraint firstItem="nms-9G-ObC" firstAttribute="height" secondItem="Pxe-Sy-uR2" secondAttribute="height" multiplier="0.4" id="tWM-ki-TH5"/>
+                <constraint firstItem="nms-9G-ObC" firstAttribute="leading" secondItem="Pxe-Sy-uR2" secondAttribute="leading" id="v3l-dm-E5A"/>
             </constraints>
             <size key="customSize" width="152" height="140"/>
+            <connections>
+                <outlet property="MainImageView" destination="Pxe-Sy-uR2" id="name-outlet-Pxe-Sy-uR2"/>
+                <outlet property="MainImageViewBottomConstraint" destination="Vrh-U3-Ao4" id="name-outlet-Vrh-U3-Ao4"/>
+                <outlet property="MainImageViewLeadingConstraint" destination="XBT-a3-Nfh" id="name-outlet-XBT-a3-Nfh"/>
+                <outlet property="MainImageViewTopConstraint" destination="nfT-sA-q4e" id="name-outlet-nfT-sA-q4e"/>
+                <outlet property="MainImageViewTrailingConstraint" destination="7s8-Jr-XDP" id="name-outlet-7s8-Jr-XDP"/>
+                <outlet property="SelectedIconImageView" destination="0kR-Za-Wah" id="name-outlet-0kR-Za-Wah"/>
+                <outlet property="TopGradientView" destination="nms-9G-ObC" id="name-outlet-nms-9G-ObC"/>
+            </connections>
             <point key="canvasLocation" x="85" y="99"/>
         </collectionViewCell>
     </objects>

@@ -94,13 +94,13 @@
     <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\Contents.json" />
     <ImageAsset Include="Assets.xcassets\Contents.json" />
     <ImageAsset Include="Assets.xcassets\missing.imageset\Contents.json" />
-    <ImageAsset Include="Assets.xcassets\missing.imageset\missing_120.jpg" />
     <ImageAsset Include="Assets.xcassets\circle_checked.imageset\Contents.json" />
     <ImageAsset Include="Assets.xcassets\circle_checked.imageset\baseline_check_circle_black_24dp.png" />
     <ImageAsset Include="Assets.xcassets\circle_checked.imageset\baseline_check_circle_black_24dpx1.png" />
     <ImageAsset Include="Assets.xcassets\circle_unchecked.imageset\Contents.json" />
     <ImageAsset Include="Assets.xcassets\circle_unchecked.imageset\baseline_check_circle_outline_black_24dp copy 1x.png" />
     <ImageAsset Include="Assets.xcassets\circle_unchecked.imageset\baseline_check_circle_outline_black_24dp copy.png" />
+    <ImageAsset Include="Assets.xcassets\missing.imageset\download %281%29.jpeg" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Resources\" />
@@ -110,6 +110,7 @@
     <Folder Include="Assets.xcassets\missing.imageset\" />
     <Folder Include="Assets.xcassets\circle_checked.imageset\" />
     <Folder Include="Assets.xcassets\circle_unchecked.imageset\" />
+    <Folder Include="Helpers\" />
   </ItemGroup>
   <ItemGroup>
     <InterfaceDefinition Include="LaunchScreen.storyboard" />
@@ -136,6 +137,7 @@
     <Compile Include="ImagePicker\Cells\SelectableImageCollectionViewCell.designer.cs">
       <DependentUpon>SelectableImageCollectionViewCell.cs</DependentUpon>
     </Compile>
+    <Compile Include="Helpers\LayoutHelper.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />
 </Project>
