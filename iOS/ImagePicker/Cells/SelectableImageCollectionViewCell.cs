@@ -1,4 +1,5 @@
 ﻿using System;
+using AssetsLibrary;
 using CoreAnimation;
 using CoreGraphics;
 using Foundation;
@@ -13,6 +14,7 @@ namespace ImagePicker.iOS.ImagePicker.Cells
 		public static readonly string NibName = "SelectableImageCollectionViewCell";
 		public const float SelectedConstraint = 12f;
 
+		private ALAsset Asset;
 		private bool IsSelected;
 
 		private CAGradientLayer GradientLayer;
@@ -22,15 +24,30 @@ namespace ImagePicker.iOS.ImagePicker.Cells
 			// Note: this .ctor should not contain any initialization logic.
 		}
 
-		public void UpdateCell(bool isSelected)
+		public void UpdateCell(ALAsset asset, bool isSelected)
 		{
-			IsSelected = isSelected;
-			UpdateSelectedState();
+			MainImageView.Layer.MasksToBounds = true;
+			Asset = asset;
+			SetImageFromAsset(asset);
+			UpdateSelectedState(isSelected, false);
 			CreateGradientIfNeeded();
 		}
 
-		public void UpdateSelectedState()
+		private void SetImageFromAsset(ALAsset asset)
 		{
+			var rep = asset.DefaultRepresentation;
+			if (rep != null)
+			{
+				UIImageOrientation orientation = UIImageOrientation.Up;
+				var cgImage = rep.GetFullScreenImage();
+				MainImageView.Image = new UIImage(cgImage, 0.8f, orientation);
+			}
+		}
+
+		public void UpdateSelectedState(bool isSelected, bool animated)
+		{
+			IsSelected = isSelected;
+
 			SelectedIconImageView.Image = UIImage.FromBundle(IsSelected ? "circle_checked" : "circle_unchecked");
 			SelectedIconImageView.TintColor = IsSelected ? LayoutHelper.PrimaryColor : LayoutHelper.UnselectedColor;
 
@@ -38,10 +55,22 @@ namespace ImagePicker.iOS.ImagePicker.Cells
 			MainImageViewTrailingConstraint.Constant = IsSelected ? SelectedConstraint : 0f;
 			MainImageViewBottomConstraint.Constant = IsSelected ? SelectedConstraint : 0f;
 			MainImageViewLeadingConstraint.Constant = IsSelected ? SelectedConstraint : 0f;
-			UIView.Animate(0.2f, () =>
+			Action animation = () =>
 			{
 				LayoutIfNeeded();
-			});
+				if (GradientLayer != null)
+				{
+					GradientLayer.Frame = TopGradientView.Bounds;
+				}
+			};
+			if (animated)
+			{
+				UIView.Animate(0.2f, animation);
+			}
+			else
+			{
+				animation();
+			}
 		}
 
 		public void CreateGradientIfNeeded()

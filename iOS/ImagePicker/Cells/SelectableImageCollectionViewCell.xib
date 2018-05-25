@@ -19,7 +19,7 @@
                 <rect key="frame" x="0.0" y="0.0" width="152" height="140"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
-                    <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="missing" translatesAutoresizingMaskIntoConstraints="NO" id="Pxe-Sy-uR2">
+                    <imageView userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="Pxe-Sy-uR2">
                         <rect key="frame" x="16" y="16" width="120" height="108"/>
                     </imageView>
                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="nms-9G-ObC">
@@ -63,6 +63,5 @@
     </objects>
     <resources>
         <image name="circle_unchecked" width="24" height="24"/>
-        <image name="missing" width="60" height="60"/>
     </resources>
 </document>

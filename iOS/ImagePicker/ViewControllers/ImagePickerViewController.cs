@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using AssetsLibrary;
     using CoreGraphics;
     using Foundation;
     using global::ImagePicker.iOS.ImagePicker.Cells;
@@ -14,7 +15,8 @@
 
         private UIBarButtonItem RightBarButtonItem;
 
-        private List<bool> Images;
+        private List<ALAsset> Images;
+        private List<ALAsset> SelectedImages;
 
         public ImagePickerViewController(IntPtr intPtr) : base(intPtr)
         {
@@ -24,13 +26,10 @@
         {
             base.ViewDidLoad();
 
-            var rand = new Random();
-            Images = new List<bool>();
+            Images = new List<ALAsset>();
+            SelectedImages = new List<ALAsset>();
 
-            for (int i = 0; i < 30; i++)
-            {
-                Images.Add(false);
-            }
+            GetAllAssets();
 
             NavigationItem.LeftBarButtonItem = new UIBarButtonItem("Cancel",
                                                                    UIBarButtonItemStyle.Plain,
@@ -60,19 +59,28 @@
 
         public override UICollectionViewCell GetCell(UICollectionView collectionView, NSIndexPath indexPath)
         {
-            int index = (int)indexPath.Item;
+            ALAsset asset = Images[(int)indexPath.Item];
+
             var cell = collectionView.DequeueReusableCell(SelectableImageCollectionViewCell.Identifier, indexPath) as SelectableImageCollectionViewCell;
-            cell.UpdateCell(Images[index]);
+            cell.UpdateCell(asset, SelectedImages.Contains(asset));
             return cell;
         }
 
         public override void ItemSelected(UICollectionView collectionView, NSIndexPath indexPath)
         {
-            int index = (int)indexPath.Item;
-            Images[index] = !Images[index];
+            ALAsset asset = Images[(int)indexPath.Item];
+            bool isImageSelected = SelectedImages.Contains(asset);
+            if (isImageSelected)
+            {
+                SelectedImages.Remove(asset);
+            }
+            else
+            {
+                SelectedImages.Add(asset);
+            }
 
             var cell = collectionView.CellForItem(indexPath) as SelectableImageCollectionViewCell;
-            cell.UpdateCell(Images[index]);
+            cell.UpdateSelectedState(!isImageSelected, true);
             UpdateNavigationBar();
         }
 
@@ -89,9 +97,33 @@
 
         private void UpdateNavigationBar()
         {
-            int numberSelectedImage = Images.FindAll((bool obj) => { return obj; }).Count;
+            int numberSelectedImage = SelectedImages.Count;
             Title = numberSelectedImage > 0 ? $"{numberSelectedImage} selected pictures" : "Select pictures";
             NavigationItem.RightBarButtonItem = numberSelectedImage > 0 ? RightBarButtonItem : null;
+        }
+
+        private void GetAllAssets()
+        {
+            var assetsLibrary = new ALAssetsLibrary();
+
+            assetsLibrary.Enumerate(ALAssetsGroupType.All,
+                                    (ALAssetsGroup group, ref bool stop) =>
+                                    {
+                                        group?.SetAssetsFilter(ALAssetsFilter.AllPhotos);
+                                        group?.Enumerate((ALAsset asset, nint index, ref bool st) =>
+                                        {
+                                            int notfound = Int32.MaxValue;
+                                            if (asset != null && index != notfound)
+                                            {
+                                                Images.Add(asset);
+                                            }
+                                        });
+                                        CollectionView.ReloadData();
+                                    },
+                                    (NSError obj) =>
+                                    {
+
+                                    });
         }
 
         #endregion
