@@ -165,8 +165,6 @@
 
             var cell = collectionView.CellForItem(indexPath) as SelectableImageCollectionViewCell;
             cell.UpdateSelectedState(!isImageSelected, true);
-
-            UpdateNavigationBar();
         }
 
         [Export("collectionView:layout:sizeForItemAtIndexPath:")]
@@ -288,6 +286,7 @@
         private void UnselectImage(ALAsset asset, int sectionIndex)
         {
             SelectedImages.Remove(asset);
+            UpdateNavigationBar();
 
             if (!Sections[sectionIndex].Selected)
             {
@@ -311,6 +310,8 @@
                 return false;
             }
             SelectedImages.Add(asset);
+            UpdateNavigationBar();
+
             bool allSectionImageSelected = true;
             foreach (var image in Sections[sectionIndex].Images)
             {

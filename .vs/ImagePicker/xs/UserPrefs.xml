@@ -1,9 +1,9 @@
 ﻿<Properties StartupConfiguration="{576EE1FE-C7B6-4A15-854A-6E3B3D7C805C}|Default">
   <MonoDevelop.Ide.ItemProperties.ImagePicker HideGettingStarted="True" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="iOS/ImagePicker/ViewControllers/ImagePickerViewController.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="iOS/ImagePicker/Cells/SelectableImageCollectionViewCell.cs">
     <Files>
-      <File FileName="iOS/ImagePicker/ViewControllers/ImagePickerViewController.cs" Line="344" Column="10" />
-      <File FileName="iOS/ImagePicker/Cells/SelectableImageCollectionViewCell.cs" Line="18" Column="21" />
+      <File FileName="iOS/ImagePicker/ViewControllers/ImagePickerViewController.cs" Line="312" Column="39" />
+      <File FileName="iOS/ImagePicker/Cells/SelectableImageCollectionViewCell.cs" Line="65" Column="40" />
       <File FileName="iOS/AppDelegate.cs" Line="20" Column="9" />
       <File FileName="iOS/Helpers/ImageHelper.cs" Line="11" Column="13" />
       <File FileName="iOS/ImagePicker/Cells/SelectableDateCollectionHeaderView.cs" Line="13" Column="33" />

@@ -52,6 +52,9 @@ namespace ImagePicker.iOS.ImagePicker.Cells
             MainImageView.Layer.MasksToBounds = true;
             Image = image;
             MainImageView.Image = Image.Thumbnail;
+
+            SelectedIconBackgroundView.Layer.CornerRadius = SelectedIconBackgroundView.Frame.Width / 2;
+
             UpdateSelectedState(isSelected, false);
             CreateGradientIfNeeded();
         }
@@ -60,8 +63,9 @@ namespace ImagePicker.iOS.ImagePicker.Cells
         {
             IsSelected = isSelected;
 
-            SelectedIconImageView.Image = UIImage.FromBundle(IsSelected ? "circle_checked" : "circle_unchecked");
+            SelectedIconImageView.Image = IsSelected ? UIImage.FromBundle("circle_checked") : UIImage.FromBundle("circle_unchecked");
             SelectedIconImageView.TintColor = IsSelected ? LayoutHelper.PrimaryColor : new UIColor(1f, 1f, 1f, 0.8f);
+            SelectedIconBackgroundView.Hidden = !isSelected;
 
             MainImageViewTopConstraint.Constant = IsSelected ? SelectedConstraint : 0f;
             MainImageViewTrailingConstraint.Constant = IsSelected ? SelectedConstraint : 0f;

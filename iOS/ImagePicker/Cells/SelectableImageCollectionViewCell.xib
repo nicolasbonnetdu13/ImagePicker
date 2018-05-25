@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="14109" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
     <device id="retina4_7" orientation="portrait">
         <adaptation id="fullscreen"/>
@@ -26,6 +26,10 @@
                         <rect key="frame" x="16" y="16" width="120" height="43.5"/>
                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                     </view>
+                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="H6O-g3-6bg">
+                        <rect key="frame" x="10" y="10" width="16" height="16"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                    </view>
                     <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="circle_unchecked" translatesAutoresizingMaskIntoConstraints="NO" id="0kR-Za-Wah">
                         <rect key="frame" x="6" y="6" width="24" height="24"/>
                         <constraints>
@@ -37,16 +41,20 @@
             </view>
             <color key="backgroundColor" white="0.94999999999999996" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
             <constraints>
+                <constraint firstItem="H6O-g3-6bg" firstAttribute="top" secondItem="0kR-Za-Wah" secondAttribute="top" constant="4" id="6ml-DN-f5y"/>
                 <constraint firstAttribute="trailing" secondItem="Pxe-Sy-uR2" secondAttribute="trailing" constant="16" id="7s8-Jr-XDP"/>
+                <constraint firstItem="H6O-g3-6bg" firstAttribute="leading" secondItem="0kR-Za-Wah" secondAttribute="leading" constant="4" id="In1-91-Eio"/>
                 <constraint firstItem="0kR-Za-Wah" firstAttribute="leading" secondItem="cZE-iV-UFb" secondAttribute="leading" constant="6" id="NCH-mi-Hjj"/>
                 <constraint firstItem="nms-9G-ObC" firstAttribute="top" secondItem="Pxe-Sy-uR2" secondAttribute="top" id="RBV-He-xWx"/>
                 <constraint firstAttribute="bottom" secondItem="Pxe-Sy-uR2" secondAttribute="bottom" constant="16" id="Vrh-U3-Ao4"/>
                 <constraint firstItem="Pxe-Sy-uR2" firstAttribute="leading" secondItem="cZE-iV-UFb" secondAttribute="leading" constant="16" id="XBT-a3-Nfh"/>
+                <constraint firstItem="0kR-Za-Wah" firstAttribute="trailing" secondItem="H6O-g3-6bg" secondAttribute="trailing" constant="4" id="a9K-DQ-UOI"/>
                 <constraint firstItem="0kR-Za-Wah" firstAttribute="top" secondItem="cZE-iV-UFb" secondAttribute="top" constant="6" id="bCU-9R-LXe"/>
                 <constraint firstItem="nms-9G-ObC" firstAttribute="trailing" secondItem="Pxe-Sy-uR2" secondAttribute="trailing" id="hfa-qi-3Ce"/>
                 <constraint firstItem="Pxe-Sy-uR2" firstAttribute="top" secondItem="cZE-iV-UFb" secondAttribute="top" constant="16" id="nfT-sA-q4e"/>
                 <constraint firstItem="nms-9G-ObC" firstAttribute="height" secondItem="Pxe-Sy-uR2" secondAttribute="height" multiplier="0.4" id="tWM-ki-TH5"/>
                 <constraint firstItem="nms-9G-ObC" firstAttribute="leading" secondItem="Pxe-Sy-uR2" secondAttribute="leading" id="v3l-dm-E5A"/>
+                <constraint firstItem="0kR-Za-Wah" firstAttribute="bottom" secondItem="H6O-g3-6bg" secondAttribute="bottom" constant="4" id="yui-sK-Lfl"/>
             </constraints>
             <size key="customSize" width="152" height="140"/>
             <connections>
@@ -57,6 +65,7 @@
                 <outlet property="MainImageViewTrailingConstraint" destination="7s8-Jr-XDP" id="name-outlet-7s8-Jr-XDP"/>
                 <outlet property="SelectedIconImageView" destination="0kR-Za-Wah" id="name-outlet-0kR-Za-Wah"/>
                 <outlet property="TopGradientView" destination="nms-9G-ObC" id="name-outlet-nms-9G-ObC"/>
+                <outlet property="SelectedIconBackgroundView" destination="H6O-g3-6bg" id="name-outlet-H6O-g3-6bg"/>
             </connections>
             <point key="canvasLocation" x="85" y="99"/>
         </collectionViewCell>

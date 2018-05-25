@@ -35,6 +35,10 @@ namespace ImagePicker.iOS.ImagePicker.Cells
 
         [Outlet]
         [GeneratedCode ("iOS Designer", "1.0")]
+        UIKit.UIView SelectedIconBackgroundView { get; set; }
+
+        [Outlet]
+        [GeneratedCode ("iOS Designer", "1.0")]
         UIKit.UIImageView SelectedIconImageView { get; set; }
 
         [Outlet]
@@ -66,6 +70,11 @@ namespace ImagePicker.iOS.ImagePicker.Cells
             if (MainImageViewTrailingConstraint != null) {
                 MainImageViewTrailingConstraint.Dispose ();
                 MainImageViewTrailingConstraint = null;
+            }
+
+            if (SelectedIconBackgroundView != null) {
+                SelectedIconBackgroundView.Dispose ();
+                SelectedIconBackgroundView = null;
             }
 
             if (SelectedIconImageView != null) {
