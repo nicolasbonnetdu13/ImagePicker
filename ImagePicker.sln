@@ -54,4 +54,12 @@ Global
 		{576EE1FE-C7B6-4A15-854A-6E3B3D7C805C}.Debug|iPhone.ActiveCfg = Debug|iPhone
 		{576EE1FE-C7B6-4A15-854A-6E3B3D7C805C}.Debug|iPhone.Build.0 = Debug|iPhone
 	EndGlobalSection
+	GlobalSection(MonoDevelopProperties) = preSolution
+		Policies = $0
+		$0.TextStylePolicy = $1
+		$1.TabsToSpaces = True
+		$1.scope = text/x-csharp
+		$0.CSharpFormattingPolicy = $2
+		$2.scope = text/x-csharp
+	EndGlobalSection
 EndGlobal

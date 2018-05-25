@@ -5,18 +5,22 @@
     using AssetsLibrary;
     using CoreGraphics;
     using Foundation;
+    using global::ImagePicker.iOS.Helpers;
     using global::ImagePicker.iOS.ImagePicker.Cells;
+    using global::ImagePicker.iOS.ImagePicker.Models;
     using UIKit;
 
     public partial class ImagePickerViewController : UICollectionViewController
     {
-        public const float SelectableImageCollectionViewCellSpacing = 8f;
+        public const float SelectableImageCollectionViewCellSpacing = 10f;
         public const float CollectionViewNumberOfColumn = 3;
 
         private UIBarButtonItem RightBarButtonItem;
+        private List<UITapGestureRecognizer> HeaderTapGestureRecognizers;
 
         private List<ALAsset> Images;
         private List<ALAsset> SelectedImages;
+        private List<ImagePickerSection> Sections;
 
         public ImagePickerViewController(IntPtr intPtr) : base(intPtr)
         {
@@ -28,8 +32,11 @@
 
             Images = new List<ALAsset>();
             SelectedImages = new List<ALAsset>();
+            Sections = new List<ImagePickerSection>();
 
             GetAllAssets();
+
+            HeaderTapGestureRecognizers = new List<UITapGestureRecognizer>();
 
             NavigationItem.LeftBarButtonItem = new UIBarButtonItem("Cancel",
                                                                    UIBarButtonItemStyle.Plain,
@@ -41,46 +48,117 @@
 
             CollectionView.Delegate = this;
             CollectionView.RegisterNibForCell(UINib.FromName(SelectableImageCollectionViewCell.NibName, null), SelectableImageCollectionViewCell.Identifier);
+            CollectionView.RegisterNibForSupplementaryView(UINib.FromName(SelectableDateCollectionHeaderView.NibName, null), UICollectionElementKindSection.Header, SelectableDateCollectionHeaderView.Identifier);
+
+            CollectionView.SetCollectionViewLayout(CreateCollectionViewLayout(), false);
 
             UpdateNavigationBar();
         }
 
         public override void ViewWillTransitionToSize(CGSize toSize, IUIViewControllerTransitionCoordinator coordinator)
         {
-            coordinator.AnimateAlongsideTransition((obj) => CollectionView.ReloadData(), (obj) => { });
+            coordinator.AnimateAlongsideTransition((obj) =>
+            {
+                CollectionView.SetCollectionViewLayout(CreateCollectionViewLayout(), true);
+                CollectionView.ReloadData();
+            },
+                                                   (obj) => { });
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            try
+            {
+                if (disposing)
+                {
+                    RightBarButtonItem?.Dispose();
+                    RightBarButtonItem = null;
+
+                    foreach (var gesture in HeaderTapGestureRecognizers)
+                    {
+                        gesture?.Dispose();
+                    }
+                    HeaderTapGestureRecognizers.Clear();
+
+                    ReleaseDesignerOutlets();
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error while disposing TabBarController {ex}");
+            }
+            finally
+            {
+                base.Dispose(disposing);
+            }
         }
 
         #region CollectionView
 
+        public override nint NumberOfSections(UICollectionView collectionView)
+        {
+            return Sections.Count;
+        }
+
         public override nint GetItemsCount(UICollectionView collectionView, nint section)
         {
-            return Images.Count;
+            return Sections[(int)section].Images.Count;
+        }
+
+        [Export("collectionView:viewForSupplementaryElementOfKind:atIndexPath:")]
+        public override UICollectionReusableView GetViewForSupplementaryElement(UICollectionView collectionView, NSString elementKind, NSIndexPath indexPath)
+        {
+            var section = Sections[indexPath.Section];
+            using (var headerKind = new NSString("UICollectionElementKindSectionHeader"))
+            {
+                if (elementKind.Equals(headerKind))
+                {
+                    var headerView = collectionView.DequeueReusableSupplementaryView(elementKind, SelectableDateCollectionHeaderView.Identifier, indexPath) as SelectableDateCollectionHeaderView;
+                    headerView.UpdateHeader(section.Date, false);
+                    headerView.AddGestureRecognizer(CreateHeaderTapGesture());
+                    return headerView;
+                }
+            }
+            return null;
         }
 
         public override UICollectionViewCell GetCell(UICollectionView collectionView, NSIndexPath indexPath)
         {
-            ALAsset asset = Images[(int)indexPath.Item];
+            var image = Sections[indexPath.Section].Images[(int)(indexPath.Item)];
 
             var cell = collectionView.DequeueReusableCell(SelectableImageCollectionViewCell.Identifier, indexPath) as SelectableImageCollectionViewCell;
-            cell.UpdateCell(asset, SelectedImages.Contains(asset));
+            cell.UpdateCell(image, SelectedImages.Contains(image.Asset));
             return cell;
+        }
+
+        public override bool ShouldSelectItem(UICollectionView collectionView, NSIndexPath indexPath)
+        {
+            var image = Sections[indexPath.Section].Images[(int)(indexPath.Item)];
+            bool isImageSelected = SelectedImages.Contains(image.Asset);
+            if (SelectedImages.Count < 10 || isImageSelected)
+            {
+                return true;
+            }
+
+            return false;
         }
 
         public override void ItemSelected(UICollectionView collectionView, NSIndexPath indexPath)
         {
-            ALAsset asset = Images[(int)indexPath.Item];
-            bool isImageSelected = SelectedImages.Contains(asset);
+            var image = Sections[indexPath.Section].Images[(int)(indexPath.Item)];
+            bool isImageSelected = SelectedImages.Contains(image.Asset);
             if (isImageSelected)
             {
-                SelectedImages.Remove(asset);
+                UnselectImage(image.Asset, indexPath.Section);
             }
             else
             {
-                SelectedImages.Add(asset);
+                SelectImageIfPossible(image.Asset, indexPath.Section);
             }
 
             var cell = collectionView.CellForItem(indexPath) as SelectableImageCollectionViewCell;
             cell.UpdateSelectedState(!isImageSelected, true);
+
             UpdateNavigationBar();
         }
 
@@ -95,11 +173,45 @@
 
         #region Private methods
 
+        private UICollectionViewFlowLayout CreateCollectionViewLayout()
+        {
+            var layout = new UICollectionViewFlowLayout();
+            layout.HeaderReferenceSize = new CGSize(CollectionView.Frame.Width, 50);
+            CollectionView.SetCollectionViewLayout(layout, false);
+            return layout;
+        }
+
         private void UpdateNavigationBar()
         {
             int numberSelectedImage = SelectedImages.Count;
             Title = numberSelectedImage > 0 ? $"{numberSelectedImage} selected pictures" : "Select pictures";
             NavigationItem.RightBarButtonItem = numberSelectedImage > 0 ? RightBarButtonItem : null;
+        }
+
+        private void ReloadData()
+        {
+            Sections.Clear();
+            if (Images.Count == 0)
+            {
+                return;
+            }
+            Images.Sort((x, y) => { return y.Date.ToDateTime().CompareTo(x.Date.ToDateTime()); });
+
+            var lastDate = Images[0].Date.ToDateTime().Date;
+            int currentSection = 0;
+            Sections.Add(new ImagePickerSection(lastDate));
+
+            foreach (var asset in Images)
+            {
+                if (!asset.Date.ToDateTime().Date.Equals(lastDate))
+                {
+                    lastDate = asset.Date.ToDateTime().Date;
+                    currentSection++;
+                    Sections.Add(new ImagePickerSection(lastDate));
+                }
+                Sections[currentSection].Images.Add(new AssetImage(asset));
+            }
+            CollectionView.ReloadData();
         }
 
         private void GetAllAssets()
@@ -118,12 +230,111 @@
                                                 Images.Add(asset);
                                             }
                                         });
-                                        CollectionView.ReloadData();
+                                        ReloadData();
                                     },
                                     (NSError obj) =>
                                     {
 
                                     });
+        }
+
+        private UITapGestureRecognizer CreateHeaderTapGesture()
+        {
+            var headerTapGestureRecognizer = new UITapGestureRecognizer();
+            headerTapGestureRecognizer.AddTarget(HandleHeaderTapGesture);
+            HeaderTapGestureRecognizers.Add(headerTapGestureRecognizer);
+            return headerTapGestureRecognizer;
+        }
+
+        private void HandleHeaderTapGesture(NSObject obj)
+        {
+            if (obj is UITapGestureRecognizer gesture)
+            {
+                if (gesture.View is SelectableDateCollectionHeaderView header)
+                {
+                    var section = GetSectionFromDateTime(header.DateTime);
+                    int sectionIndex = Sections.IndexOf(section);
+                    bool isSectionSelected = section.Selected;
+                    for (int i = 0; i < section.Images.Count; ++i)
+                    {
+                        if (CollectionView.CellForItem(NSIndexPath.FromItemSection(i, sectionIndex)) is SelectableImageCollectionViewCell cell)
+                        {
+                            if (isSectionSelected)
+                            {
+                                UnselectImage(cell.Image.Asset, sectionIndex);
+                                cell.UpdateSelectedState(false, true);
+                                continue;
+                            }
+                            if (!SelectedImages.Contains(cell.Image.Asset))
+                            {
+                                if (SelectImageIfPossible(cell.Image.Asset, sectionIndex))
+                                {
+                                    cell.UpdateSelectedState(true, true);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        private void UnselectImage(ALAsset asset, int sectionIndex)
+        {
+            SelectedImages.Remove(asset);
+
+            if (!Sections[sectionIndex].Selected)
+            {
+                return;
+            }
+            Sections[sectionIndex].Selected = false;
+            using (var headerKind = new NSString("UICollectionElementKindSectionHeader"))
+            {
+                var header = CollectionView.GetSupplementaryView(headerKind, NSIndexPath.FromItemSection(0, sectionIndex)) as SelectableDateCollectionHeaderView;
+                header.UpdateSelectedState(false, true);
+            }
+        }
+
+        private bool SelectImageIfPossible(ALAsset asset, int sectionIndex)
+        {
+            if (SelectedImages.Count == 10)
+            {
+                return false;
+            }
+            SelectedImages.Add(asset);
+            bool allSectionImageSelected = true;
+            foreach (var image in Sections[sectionIndex].Images)
+            {
+                if (!SelectedImages.Contains(image.Asset))
+                {
+                    allSectionImageSelected = false;
+                    break;
+                }
+            }
+
+            if (allSectionImageSelected)
+            {
+                Sections[sectionIndex].Selected = true;
+                using (var headerKind = new NSString("UICollectionElementKindSectionHeader"))
+                {
+                    var header = CollectionView.GetSupplementaryView(headerKind, NSIndexPath.FromItemSection(0, sectionIndex)) as SelectableDateCollectionHeaderView;
+                    header.UpdateSelectedState(true, true);
+                }
+            }
+
+            return true;
+        }
+
+        private ImagePickerSection GetSectionFromDateTime(DateTime date)
+        {
+            foreach (var section in Sections)
+            {
+                if (section.Date.Equals(date))
+                {
+                    return section;
+                }
+            }
+
+            return null;
         }
 
         #endregion

@@ -1,4 +1,5 @@
 ﻿using Foundation;
+using ImagePicker.iOS.Helpers;
 using UIKit;
 
 namespace ImagePicker.iOS
@@ -20,6 +21,13 @@ namespace ImagePicker.iOS
         {
             // Override point for customization after application launch.
             // If not required for your application you can safely delete this method
+
+            UINavigationBar.Appearance.TintColor = UIColor.White;
+            UINavigationBar.Appearance.SetBackgroundImage(ImageHelper.ImageWithColor(LayoutHelper.PrimaryColor), UIBarMetrics.Default);
+            UINavigationBar.Appearance.TitleTextAttributes = new UIStringAttributes
+            {
+                ForegroundColor = UIColor.White
+            };
 
             return true;
         }

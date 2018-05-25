@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+﻿<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">iPhoneSimulator</Platform>
@@ -111,12 +110,14 @@
     <Folder Include="Assets.xcassets\circle_checked.imageset\" />
     <Folder Include="Assets.xcassets\circle_unchecked.imageset\" />
     <Folder Include="Helpers\" />
+    <Folder Include="ImagePicker\Models\" />
   </ItemGroup>
   <ItemGroup>
     <InterfaceDefinition Include="LaunchScreen.storyboard" />
     <InterfaceDefinition Include="Main.storyboard" />
     <InterfaceDefinition Include="ImagePicker\ImagePicker.storyboard" />
     <InterfaceDefinition Include="ImagePicker\Cells\SelectableImageCollectionViewCell.xib" />
+    <InterfaceDefinition Include="ImagePicker\Cells\SelectableDateCollectionHeaderView.xib" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Info.plist" />
@@ -138,6 +139,14 @@
       <DependentUpon>SelectableImageCollectionViewCell.cs</DependentUpon>
     </Compile>
     <Compile Include="Helpers\LayoutHelper.cs" />
+    <Compile Include="Helpers\ImageHelper.cs" />
+    <Compile Include="Helpers\DateHelper.cs" />
+    <Compile Include="ImagePicker\Cells\SelectableDateCollectionHeaderView.cs" />
+    <Compile Include="ImagePicker\Cells\SelectableDateCollectionHeaderView.designer.cs">
+      <DependentUpon>SelectableDateCollectionHeaderView.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ImagePicker\Models\AssetImage.cs" />
+    <Compile Include="ImagePicker\Models\ImagePickerSection.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />
 </Project>
