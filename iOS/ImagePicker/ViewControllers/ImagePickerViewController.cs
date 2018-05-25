@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Threading.Tasks;
     using AssetsLibrary;
     using CoreGraphics;
     using Foundation;
@@ -10,7 +11,7 @@
     using global::ImagePicker.iOS.ImagePicker.Models;
     using UIKit;
 
-    public partial class ImagePickerViewController : UICollectionViewController
+    public partial class ImagePickerViewController : UIViewController, IUICollectionViewDataSource, IUICollectionViewDelegate, IUIScrollViewDelegate, IUICollectionViewSource
     {
         public const float SelectableImageCollectionViewCellSpacing = 10f;
         public const float CollectionViewNumberOfColumn = 3;
@@ -33,10 +34,9 @@
             Images = new List<ALAsset>();
             SelectedImages = new List<ALAsset>();
             Sections = new List<ImagePickerSection>();
+            HeaderTapGestureRecognizers = new List<UITapGestureRecognizer>();
 
             GetAllAssets();
-
-            HeaderTapGestureRecognizers = new List<UITapGestureRecognizer>();
 
             NavigationItem.LeftBarButtonItem = new UIBarButtonItem("Cancel",
                                                                    UIBarButtonItemStyle.Plain,
@@ -47,6 +47,7 @@
                                                      (sender, e) => { DismissModalViewController(true); });
 
             CollectionView.Delegate = this;
+            CollectionView.DataSource = this;
             CollectionView.RegisterNibForCell(UINib.FromName(SelectableImageCollectionViewCell.NibName, null), SelectableImageCollectionViewCell.Identifier);
             CollectionView.RegisterNibForSupplementaryView(UINib.FromName(SelectableDateCollectionHeaderView.NibName, null), UICollectionElementKindSection.Header, SelectableDateCollectionHeaderView.Identifier);
 
@@ -95,18 +96,20 @@
 
         #region CollectionView
 
-        public override nint NumberOfSections(UICollectionView collectionView)
+        [Export("numberOfSectionsInCollectionView:")]
+        public nint NumberOfSections(UICollectionView collectionView)
         {
             return Sections.Count;
         }
 
-        public override nint GetItemsCount(UICollectionView collectionView, nint section)
+        [Export("collectionView:numberOfItemsInSection:")]
+        public nint GetItemsCount(UICollectionView collectionView, nint section)
         {
             return Sections[(int)section].Images.Count;
         }
 
         [Export("collectionView:viewForSupplementaryElementOfKind:atIndexPath:")]
-        public override UICollectionReusableView GetViewForSupplementaryElement(UICollectionView collectionView, NSString elementKind, NSIndexPath indexPath)
+        public UICollectionReusableView GetViewForSupplementaryElement(UICollectionView collectionView, NSString elementKind, NSIndexPath indexPath)
         {
             var section = Sections[indexPath.Section];
             using (var headerKind = new NSString("UICollectionElementKindSectionHeader"))
@@ -114,7 +117,7 @@
                 if (elementKind.Equals(headerKind))
                 {
                     var headerView = collectionView.DequeueReusableSupplementaryView(elementKind, SelectableDateCollectionHeaderView.Identifier, indexPath) as SelectableDateCollectionHeaderView;
-                    headerView.UpdateHeader(section.Date, false);
+                    headerView.UpdateHeader(section.Date, section.Selected);
                     headerView.AddGestureRecognizer(CreateHeaderTapGesture());
                     return headerView;
                 }
@@ -122,7 +125,8 @@
             return null;
         }
 
-        public override UICollectionViewCell GetCell(UICollectionView collectionView, NSIndexPath indexPath)
+        [Export("collectionView:cellForItemAtIndexPath:")]
+        public UICollectionViewCell GetCell(UICollectionView collectionView, NSIndexPath indexPath)
         {
             var image = Sections[indexPath.Section].Images[(int)(indexPath.Item)];
 
@@ -131,7 +135,8 @@
             return cell;
         }
 
-        public override bool ShouldSelectItem(UICollectionView collectionView, NSIndexPath indexPath)
+        [Export("collectionView:shouldSelectItemAtIndexPath:")]
+        public bool ShouldSelectItem(UICollectionView collectionView, NSIndexPath indexPath)
         {
             var image = Sections[indexPath.Section].Images[(int)(indexPath.Item)];
             bool isImageSelected = SelectedImages.Contains(image.Asset);
@@ -140,10 +145,12 @@
                 return true;
             }
 
+            SetToasterText("You can select a maximum of 10 images");
             return false;
         }
 
-        public override void ItemSelected(UICollectionView collectionView, NSIndexPath indexPath)
+        [Export("collectionView:didSelectItemAtIndexPath:")]
+        public void ItemSelected(UICollectionView collectionView, NSIndexPath indexPath)
         {
             var image = Sections[indexPath.Section].Images[(int)(indexPath.Item)];
             bool isImageSelected = SelectedImages.Contains(image.Asset);
@@ -289,8 +296,10 @@
             Sections[sectionIndex].Selected = false;
             using (var headerKind = new NSString("UICollectionElementKindSectionHeader"))
             {
-                var header = CollectionView.GetSupplementaryView(headerKind, NSIndexPath.FromItemSection(0, sectionIndex)) as SelectableDateCollectionHeaderView;
-                header.UpdateSelectedState(false, true);
+                if (CollectionView.GetSupplementaryView(headerKind, NSIndexPath.FromItemSection(0, sectionIndex)) is SelectableDateCollectionHeaderView header)
+                {
+                    header.UpdateSelectedState(false, true);
+                }
             }
         }
 
@@ -298,6 +307,7 @@
         {
             if (SelectedImages.Count == 10)
             {
+                SetToasterText("You can select a maximum of 10 images");
                 return false;
             }
             SelectedImages.Add(asset);
@@ -316,8 +326,10 @@
                 Sections[sectionIndex].Selected = true;
                 using (var headerKind = new NSString("UICollectionElementKindSectionHeader"))
                 {
-                    var header = CollectionView.GetSupplementaryView(headerKind, NSIndexPath.FromItemSection(0, sectionIndex)) as SelectableDateCollectionHeaderView;
-                    header.UpdateSelectedState(true, true);
+                    if (CollectionView.GetSupplementaryView(headerKind, NSIndexPath.FromItemSection(0, sectionIndex)) is SelectableDateCollectionHeaderView header)
+                    {
+                        header.UpdateSelectedState(true, true);
+                    }
                 }
             }
 
@@ -335,6 +347,35 @@
             }
 
             return null;
+        }
+
+        private void SetToasterText(string text)
+        {
+            ToasterLabel.Text = text;
+            ToasterView.LayoutIfNeeded();
+            ToasterView.Layer.CornerRadius = ToasterView.Frame.Height / 2;
+            UIView.Animate(0.3f, () =>
+            {
+                ToasterView.Hidden = false;
+            });
+            Task.Run(async () =>
+            {
+                await Task.Delay(3000);
+                if (ToasterView != null)
+                {
+                    InvokeOnMainThread(() =>
+                    {
+                        UIView.Animate(0.3f, () =>
+                        {
+                            ToasterView.Alpha = 0f;
+                        }, () =>
+                        {
+                            ToasterView.Alpha = 1f;
+                            ToasterView.Hidden = true;
+                        });
+                    });
+                }
+            });
         }
 
         #endregion
