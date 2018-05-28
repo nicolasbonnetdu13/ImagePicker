@@ -118,6 +118,7 @@
     <InterfaceDefinition Include="ImagePicker\ImagePicker.storyboard" />
     <InterfaceDefinition Include="ImagePicker\Cells\SelectableImageCollectionViewCell.xib" />
     <InterfaceDefinition Include="ImagePicker\Cells\SelectableDateCollectionHeaderView.xib" />
+    <InterfaceDefinition Include="ImagePicker\Cells\TakePhotoCollectionViewCell.xib" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Info.plist" />
@@ -147,6 +148,10 @@
     </Compile>
     <Compile Include="ImagePicker\Models\AssetImage.cs" />
     <Compile Include="ImagePicker\Models\ImagePickerSection.cs" />
+    <Compile Include="ImagePicker\Cells\TakePhotoCollectionViewCell.cs" />
+    <Compile Include="ImagePicker\Cells\TakePhotoCollectionViewCell.designer.cs">
+      <DependentUpon>TakePhotoCollectionViewCell.cs</DependentUpon>
+    </Compile>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />
 </Project>

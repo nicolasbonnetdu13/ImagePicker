@@ -51,7 +51,8 @@ namespace ImagePicker.iOS.ImagePicker.Cells
         {
             MainImageView.Layer.MasksToBounds = true;
             Image = image;
-            MainImageView.Image = Image.Thumbnail;
+            UIImageOrientation orientation = UIImageOrientation.Up;
+            MainImageView.Image = new UIImage(Image.Thumbnail, 0.8f, orientation);
 
             SelectedIconBackgroundView.Layer.CornerRadius = SelectedIconBackgroundView.Frame.Width / 2;
 

@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="14109" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
     <device id="retina4_7" orientation="portrait">
         <adaptation id="fullscreen"/>
@@ -25,7 +25,7 @@
                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Date" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="KVP-fn-lXZ">
                     <rect key="frame" x="46" y="29" width="37" height="21"/>
                     <fontDescription key="fontDescription" type="system" weight="medium" pointSize="17"/>
-                    <nil key="textColor"/>
+                    <color key="textColor" white="0.0" alpha="0.87" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                     <nil key="highlightedColor"/>
                 </label>
             </subviews>
@@ -34,12 +34,13 @@
                 <constraint firstItem="a12-gN-8E2" firstAttribute="centerY" secondItem="alV-nZ-tNe" secondAttribute="centerY" id="J7a-QR-4EF"/>
                 <constraint firstItem="KVP-fn-lXZ" firstAttribute="centerY" secondItem="alV-nZ-tNe" secondAttribute="centerY" id="YYe-Sh-CND"/>
                 <constraint firstItem="a12-gN-8E2" firstAttribute="leading" secondItem="alV-nZ-tNe" secondAttribute="leading" constant="6" id="aYo-FM-LEq"/>
+                <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="KVP-fn-lXZ" secondAttribute="trailing" constant="16" id="wzI-Sa-UEE"/>
             </constraints>
-            <point key="canvasLocation" x="16.5" y="-49"/>
             <connections>
-                <outlet property="SelectedIconImageView" destination="a12-gN-8E2" id="name-outlet-a12-gN-8E2"/>
                 <outlet property="DateLabel" destination="KVP-fn-lXZ" id="name-outlet-KVP-fn-lXZ"/>
+                <outlet property="SelectedIconImageView" destination="a12-gN-8E2" id="name-outlet-a12-gN-8E2"/>
             </connections>
+            <point key="canvasLocation" x="16.5" y="-49"/>
         </collectionReusableView>
     </objects>
 </document>

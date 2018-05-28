@@ -1,22 +1,21 @@
 ﻿<Properties StartupConfiguration="{576EE1FE-C7B6-4A15-854A-6E3B3D7C805C}|Default">
   <MonoDevelop.Ide.ItemProperties.ImagePicker HideGettingStarted="True" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="iOS/ImagePicker/Cells/SelectableImageCollectionViewCell.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="iOS/ImagePicker/Models/AssetImage.cs">
     <Files>
-      <File FileName="iOS/ImagePicker/ViewControllers/ImagePickerViewController.cs" Line="312" Column="39" />
-      <File FileName="iOS/ImagePicker/Cells/SelectableImageCollectionViewCell.cs" Line="65" Column="40" />
-      <File FileName="iOS/AppDelegate.cs" Line="20" Column="9" />
-      <File FileName="iOS/Helpers/ImageHelper.cs" Line="11" Column="13" />
-      <File FileName="iOS/ImagePicker/Cells/SelectableDateCollectionHeaderView.cs" Line="13" Column="33" />
-      <File FileName="iOS/ImagePicker/Models/ImagePickerSection.cs" Line="11" Column="29" />
-      <File FileName="iOS/ImagePicker/Models/AssetImage.cs" Line="17" Column="33" />
+      <File FileName="iOS/ImagePicker/ViewControllers/ImagePickerViewController.cs" Line="56" Column="13" />
+      <File FileName="iOS/ImagePicker/Models/ImagePickerSection.cs" Line="14" Column="36" />
+      <File FileName="iOS/Main.cs" Line="17" Column="1" />
+      <File FileName="iOS/ImagePicker/Cells/TakePhotoCollectionViewCell.cs" Line="14" Column="10" />
+      <File FileName="iOS/ImagePicker/Cells/SelectableImageCollectionViewCell.cs" Line="13" Column="6" />
+      <File FileName="iOS/ImagePicker/Models/AssetImage.cs" Line="20" Column="14" />
     </Files>
   </MonoDevelop.Ide.Workbench>
-  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug|iPhone" />
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
     <BreakpointStore />
   </MonoDevelop.Ide.DebuggingService.Breakpoints>
   <MonoDevelop.Ide.DebuggingService.PinnedWatches />
-  <MonoDevelop.Ide.ItemProperties.ImagePicker.iOS PreferredExecutionTarget="MonoDevelop.IPhone.IPhoneSimulatorTarget.433B08B6-96E2-4254-BC85-1D477A122438" />
+  <MonoDevelop.Ide.ItemProperties.ImagePicker.iOS PreferredExecutionTarget="MonoDevelop.IPhone.IPhoneDeviceTarget.562f11db1ded1c2db11a0160479b98676a5eeb07" />
   <MultiItemStartupConfigurations />
   <MonoDevelop.Ide.ItemProperties.ImagePicker.Droid FirstBuild="True" />
 </Properties>

@@ -15,11 +15,12 @@
     {
         public const float SelectableImageCollectionViewCellSpacing = 10f;
         public const float CollectionViewNumberOfColumn = 3;
+        static NSString headerId = new NSString("Header");
 
         private UIBarButtonItem RightBarButtonItem;
         private List<UITapGestureRecognizer> HeaderTapGestureRecognizers;
 
-        private List<ALAsset> Images;
+        private List<AssetImage> Images;
         private List<ALAsset> SelectedImages;
         private List<ImagePickerSection> Sections;
 
@@ -31,26 +32,36 @@
         {
             base.ViewDidLoad();
 
-            Images = new List<ALAsset>();
+            Images = new List<AssetImage>();
             SelectedImages = new List<ALAsset>();
-            Sections = new List<ImagePickerSection>();
+            Sections = new List<ImagePickerSection> { new ImagePickerSection() };
             HeaderTapGestureRecognizers = new List<UITapGestureRecognizer>();
 
             GetAllAssets();
 
             NavigationItem.LeftBarButtonItem = new UIBarButtonItem("Cancel",
                                                                    UIBarButtonItemStyle.Plain,
-                                                                   (sender, e) => { DismissModalViewController(true); });
+                                                                   (sender, e) =>
+                                                                   {
+                                                                       DismissModalViewController(true);
+                                                                   });
 
             RightBarButtonItem = new UIBarButtonItem("Next",
                                                      UIBarButtonItemStyle.Plain,
-                                                     (sender, e) => { DismissModalViewController(true); });
+                                                     (sender, e) =>
+                                                     {
+                                                         DismissModalViewController(true);
+                                                     });
 
             CollectionView.Delegate = this;
             CollectionView.DataSource = this;
             CollectionView.RegisterNibForCell(UINib.FromName(SelectableImageCollectionViewCell.NibName, null), SelectableImageCollectionViewCell.Identifier);
+            CollectionView.RegisterNibForCell(UINib.FromName(TakePhotoCollectionViewCell.NibName, null), TakePhotoCollectionViewCell.Identifier);
             CollectionView.RegisterNibForSupplementaryView(UINib.FromName(SelectableDateCollectionHeaderView.NibName, null), UICollectionElementKindSection.Header, SelectableDateCollectionHeaderView.Identifier);
+            CollectionView.RegisterClassForSupplementaryView(typeof(UICollectionReusableView), UICollectionElementKindSection.Header, headerId);
 
+            //Remove the extra Header height from Take Photo cell
+            CollectionView.ContentInset = new UIEdgeInsets(-50, 0, 0, 0);
             CollectionView.SetCollectionViewLayout(CreateCollectionViewLayout(), false);
 
             UpdateNavigationBar();
@@ -105,22 +116,39 @@
         [Export("collectionView:numberOfItemsInSection:")]
         public nint GetItemsCount(UICollectionView collectionView, nint section)
         {
-            return Sections[(int)section].Images.Count;
+            var imagePickerSection = Sections[(int)section];
+            switch (imagePickerSection.Type)
+            {
+                case ImagePickerSection.CellType.SelectableImage:
+                    return imagePickerSection.Images.Count;
+                case ImagePickerSection.CellType.TakePhoto:
+                    return 1;
+            }
+            return 0;
         }
 
         [Export("collectionView:viewForSupplementaryElementOfKind:atIndexPath:")]
         public UICollectionReusableView GetViewForSupplementaryElement(UICollectionView collectionView, NSString elementKind, NSIndexPath indexPath)
         {
             var section = Sections[indexPath.Section];
-            using (var headerKind = new NSString("UICollectionElementKindSectionHeader"))
+            switch (section.Type)
             {
-                if (elementKind.Equals(headerKind))
-                {
-                    var headerView = collectionView.DequeueReusableSupplementaryView(elementKind, SelectableDateCollectionHeaderView.Identifier, indexPath) as SelectableDateCollectionHeaderView;
-                    headerView.UpdateHeader(section.Date, section.Selected);
-                    headerView.AddGestureRecognizer(CreateHeaderTapGesture());
-                    return headerView;
-                }
+                case ImagePickerSection.CellType.SelectableImage:
+                    {
+                        using (var headerKind = new NSString("UICollectionElementKindSectionHeader"))
+                        {
+                            if (elementKind.Equals(headerKind) && section.Type == ImagePickerSection.CellType.SelectableImage)
+                            {
+                                var headerView = collectionView.DequeueReusableSupplementaryView(elementKind, SelectableDateCollectionHeaderView.Identifier, indexPath) as SelectableDateCollectionHeaderView;
+                                headerView.UpdateHeader(section.Date, section.Selected);
+                                headerView.AddGestureRecognizer(CreateHeaderTapGesture());
+                                return headerView;
+                            }
+                        }
+                        break;
+                    }
+                case ImagePickerSection.CellType.TakePhoto:
+                    return collectionView.DequeueReusableSupplementaryView(elementKind, headerId, indexPath);
             }
             return null;
         }
@@ -128,50 +156,96 @@
         [Export("collectionView:cellForItemAtIndexPath:")]
         public UICollectionViewCell GetCell(UICollectionView collectionView, NSIndexPath indexPath)
         {
-            var image = Sections[indexPath.Section].Images[(int)(indexPath.Item)];
+            var section = Sections[indexPath.Section];
+            switch (section.Type)
+            {
+                case ImagePickerSection.CellType.SelectableImage:
+                    {
+                        var image = section.Images[(int)(indexPath.Item)];
 
-            var cell = collectionView.DequeueReusableCell(SelectableImageCollectionViewCell.Identifier, indexPath) as SelectableImageCollectionViewCell;
-            cell.UpdateCell(image, SelectedImages.Contains(image.Asset));
-            return cell;
+                        var cell = collectionView.DequeueReusableCell(SelectableImageCollectionViewCell.Identifier, indexPath) as SelectableImageCollectionViewCell;
+                        cell.UpdateCell(image, SelectedImages.Contains(image.Asset));
+                        return cell;
+                    }
+                case ImagePickerSection.CellType.TakePhoto:
+                    {
+                        var cell = collectionView.DequeueReusableCell(TakePhotoCollectionViewCell.Identifier, indexPath) as TakePhotoCollectionViewCell;
+                        return cell;
+                    }
+            }
+            return null;
         }
 
         [Export("collectionView:shouldSelectItemAtIndexPath:")]
         public bool ShouldSelectItem(UICollectionView collectionView, NSIndexPath indexPath)
         {
-            var image = Sections[indexPath.Section].Images[(int)(indexPath.Item)];
-            bool isImageSelected = SelectedImages.Contains(image.Asset);
-            if (SelectedImages.Count < 10 || isImageSelected)
-            {
-                return true;
-            }
+            var section = Sections[indexPath.Section];
 
-            SetToasterText("You can select a maximum of 10 images");
+            switch (section.Type)
+            {
+                case ImagePickerSection.CellType.SelectableImage:
+                    {
+                        var image = Sections[indexPath.Section].Images[(int)(indexPath.Item)];
+                        bool isImageSelected = SelectedImages.Contains(image.Asset);
+                        if (SelectedImages.Count < 10 || isImageSelected)
+                        {
+                            return true;
+                        }
+                        else
+                        {
+                            SetToasterText("You can select a maximum of 10 images");
+                            return false;
+                        }
+                    }
+                case ImagePickerSection.CellType.TakePhoto:
+                    return false;
+            }
             return false;
         }
 
         [Export("collectionView:didSelectItemAtIndexPath:")]
         public void ItemSelected(UICollectionView collectionView, NSIndexPath indexPath)
         {
-            var image = Sections[indexPath.Section].Images[(int)(indexPath.Item)];
-            bool isImageSelected = SelectedImages.Contains(image.Asset);
-            if (isImageSelected)
+            var section = Sections[(int)indexPath.Section];
+            switch (section.Type)
             {
-                UnselectImage(image.Asset, indexPath.Section);
-            }
-            else
-            {
-                SelectImageIfPossible(image.Asset, indexPath.Section);
-            }
+                case ImagePickerSection.CellType.SelectableImage:
+                    {
+                        var image = Sections[indexPath.Section].Images[(int)(indexPath.Item)];
+                        bool isImageSelected = SelectedImages.Contains(image.Asset);
+                        if (isImageSelected)
+                        {
+                            UnselectImage(image.Asset, indexPath.Section);
+                        }
+                        else
+                        {
+                            SelectImageIfPossible(image.Asset, indexPath.Section);
+                        }
 
-            var cell = collectionView.CellForItem(indexPath) as SelectableImageCollectionViewCell;
-            cell.UpdateSelectedState(!isImageSelected, true);
+                        var cell = collectionView.CellForItem(indexPath) as SelectableImageCollectionViewCell;
+                        cell.UpdateSelectedState(!isImageSelected, true);
+                        break;
+                    }
+                case ImagePickerSection.CellType.TakePhoto:
+                    break;
+            }
         }
 
         [Export("collectionView:layout:sizeForItemAtIndexPath:")]
         public CGSize GetSizeForItem(UICollectionView collectionView, UICollectionViewLayout layout, NSIndexPath indexPath)
         {
-            nfloat ImageWidth = (collectionView.Frame.Width - SelectableImageCollectionViewCellSpacing * (CollectionViewNumberOfColumn - 1)) / CollectionViewNumberOfColumn;
-            return new CGSize(ImageWidth, ImageWidth);
+            var section = Sections[(int)indexPath.Section];
+            switch (section.Type)
+            {
+                case ImagePickerSection.CellType.SelectableImage:
+                    {
+                        nfloat ImageWidth = (collectionView.Frame.Width - SelectableImageCollectionViewCellSpacing * (CollectionViewNumberOfColumn - 1)) / CollectionViewNumberOfColumn;
+                        return new CGSize(ImageWidth, ImageWidth);
+                    }
+                case ImagePickerSection.CellType.TakePhoto:
+                    return new CGSize(collectionView.Frame.Width, 50);
+            }
+            return new CGSize();
         }
 
         #endregion
@@ -196,25 +270,26 @@
         private void ReloadData()
         {
             Sections.Clear();
+            Sections.Add(new ImagePickerSection());
             if (Images.Count == 0)
             {
                 return;
             }
-            Images.Sort((x, y) => { return y.Date.ToDateTime().CompareTo(x.Date.ToDateTime()); });
+            Images.Sort((x, y) => { return y.Date.CompareTo(x.Date); });
 
-            var lastDate = Images[0].Date.ToDateTime().Date;
-            int currentSection = 0;
+            var lastDate = Images[0].Date;
+            int currentSection = 1;
             Sections.Add(new ImagePickerSection(lastDate));
 
-            foreach (var asset in Images)
+            foreach (var image in Images)
             {
-                if (!asset.Date.ToDateTime().Date.Equals(lastDate))
+                if (!image.Date.Equals(lastDate))
                 {
-                    lastDate = asset.Date.ToDateTime().Date;
+                    lastDate = image.Date;
                     currentSection++;
                     Sections.Add(new ImagePickerSection(lastDate));
                 }
-                Sections[currentSection].Images.Add(new AssetImage(asset));
+                Sections[currentSection].Images.Add(image);
             }
             CollectionView.ReloadData();
         }
@@ -232,7 +307,7 @@
                                             int notfound = Int32.MaxValue;
                                             if (asset != null && index != notfound)
                                             {
-                                                Images.Add(asset);
+                                                Images.Add(new AssetImage(asset));
                                             }
                                         });
                                         ReloadData();

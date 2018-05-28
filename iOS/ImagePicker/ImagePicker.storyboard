@@ -84,8 +84,8 @@
                             <constraint firstItem="L96-ix-zsV" firstAttribute="top" secondItem="wdJ-7N-O2v" secondAttribute="bottom" id="QZs-x1-PRr"/>
                             <constraint firstItem="L96-ix-zsV" firstAttribute="leading" secondItem="atk-L3-fFb" secondAttribute="leading" id="Yfe-d7-Bb6"/>
                             <constraint firstItem="apt-Kt-gcZ" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="atk-L3-fFb" secondAttribute="leading" constant="16" id="cWb-hn-aKQ"/>
-                            <constraint firstItem="pTH-xW-x7f" firstAttribute="top" secondItem="L96-ix-zsV" secondAttribute="bottom" id="jFU-c4-ESB"/>
                             <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="apt-Kt-gcZ" secondAttribute="trailing" constant="16" id="jXu-K6-hvM"/>
+                            <constraint firstAttribute="bottom" secondItem="L96-ix-zsV" secondAttribute="bottom" id="lbh-YV-xam"/>
                             <constraint firstItem="apt-Kt-gcZ" firstAttribute="centerX" secondItem="atk-L3-fFb" secondAttribute="centerX" id="wbA-6z-mpa"/>
                         </constraints>
                     </view>
