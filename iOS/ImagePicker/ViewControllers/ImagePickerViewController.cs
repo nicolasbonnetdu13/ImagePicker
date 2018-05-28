@@ -14,7 +14,7 @@
     public partial class ImagePickerViewController : UIViewController, IUICollectionViewDataSource, IUICollectionViewDelegate, IUIScrollViewDelegate, IUICollectionViewSource
     {
         public const float SelectableImageCollectionViewCellSpacing = 10f;
-        public const float CollectionViewNumberOfColumn = 3;
+        public const float MaximumImageWidth = 80f;
         static NSString headerId = new NSString("Header");
 
         private UIBarButtonItem RightBarButtonItem;
@@ -71,10 +71,14 @@
         {
             coordinator.AnimateAlongsideTransition((obj) =>
             {
-                CollectionView.SetCollectionViewLayout(CreateCollectionViewLayout(), true);
-                CollectionView.ReloadData();
+                CollectionView?.SetCollectionViewLayout(CreateCollectionViewLayout(), true);
+                CollectionView?.ReloadData();
             },
                                                    (obj) => { });
+        }
+
+        public override void PrepareForSegue(UIStoryboardSegue segue, NSObject sender)
+        {
         }
 
         protected override void Dispose(bool disposing)
@@ -170,6 +174,7 @@
                 case ImagePickerSection.CellType.TakePhoto:
                     {
                         var cell = collectionView.DequeueReusableCell(TakePhotoCollectionViewCell.Identifier, indexPath) as TakePhotoCollectionViewCell;
+                        cell.UpdateCell();
                         return cell;
                     }
             }
@@ -198,7 +203,7 @@
                         }
                     }
                 case ImagePickerSection.CellType.TakePhoto:
-                    return false;
+                    return true;
             }
             return false;
         }
@@ -227,7 +232,19 @@
                         break;
                     }
                 case ImagePickerSection.CellType.TakePhoto:
-                    break;
+                    {
+                        var controller = new UIViewController();
+                        controller.View.BackgroundColor = UIColor.White;
+                        var navigationController = new UINavigationController(controller);
+                        controller.NavigationItem.LeftBarButtonItem = new UIBarButtonItem("Cancel",
+                                                                                          UIBarButtonItemStyle.Plain,
+                                                                                          (sender, e) =>
+                                                                                          {
+                                                                                              controller.DismissModalViewController(true);
+                                                                                          });
+                        PresentModalViewController(navigationController, true);
+                        break;
+                    }
             }
         }
 
@@ -239,11 +256,12 @@
             {
                 case ImagePickerSection.CellType.SelectableImage:
                     {
-                        nfloat ImageWidth = (collectionView.Frame.Width - SelectableImageCollectionViewCellSpacing * (CollectionViewNumberOfColumn - 1)) / CollectionViewNumberOfColumn;
+                        var numberOfColumn = (int)(CollectionView.Frame.Width / MaximumImageWidth);
+                        nfloat ImageWidth = (collectionView.Frame.Width - SelectableImageCollectionViewCellSpacing * (numberOfColumn - 1)) / numberOfColumn;
                         return new CGSize(ImageWidth, ImageWidth);
                     }
                 case ImagePickerSection.CellType.TakePhoto:
-                    return new CGSize(collectionView.Frame.Width, 50);
+                    return new CGSize(collectionView.Frame.Width, 100);
             }
             return new CGSize();
         }

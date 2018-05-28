@@ -100,6 +100,9 @@
     <ImageAsset Include="Assets.xcassets\circle_unchecked.imageset\baseline_check_circle_outline_black_24dp copy 1x.png" />
     <ImageAsset Include="Assets.xcassets\circle_unchecked.imageset\baseline_check_circle_outline_black_24dp copy.png" />
     <ImageAsset Include="Assets.xcassets\missing.imageset\download %281%29.jpeg" />
+    <ImageAsset Include="Assets.xcassets\icon_photo.imageset\Contents.json" />
+    <ImageAsset Include="Assets.xcassets\icon_photo.imageset\baseline_add_a_photo_black_48dp.png" />
+    <ImageAsset Include="Assets.xcassets\icon_photo.imageset\baseline_add_a_photo_black_48dpx1.png" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Resources\" />
@@ -111,6 +114,7 @@
     <Folder Include="Assets.xcassets\circle_unchecked.imageset\" />
     <Folder Include="Helpers\" />
     <Folder Include="ImagePicker\Models\" />
+    <Folder Include="Assets.xcassets\icon_photo.imageset\" />
   </ItemGroup>
   <ItemGroup>
     <InterfaceDefinition Include="LaunchScreen.storyboard" />

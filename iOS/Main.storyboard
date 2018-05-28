@@ -22,12 +22,12 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="HZl-pi-VXh">
-                                <rect key="frame" x="123" y="316.5" width="129" height="34"/>
+                                <rect key="frame" x="123" y="148" width="129" height="34"/>
                                 <inset key="contentEdgeInsets" minX="16" minY="8" maxX="16" maxY="8"/>
                                 <state key="normal" title="Select images"/>
                                 <connections>
                                     <segue destination="4Xd-uH-ZM0" kind="popoverPresentation" popoverAnchorView="HZl-pi-VXh" id="KOI-zU-XnG">
-                                        <popoverArrowDirection key="popoverArrowDirection" up="YES" down="YES" left="YES" right="YES"/>
+                                        <popoverArrowDirection key="popoverArrowDirection" up="YES"/>
                                     </segue>
                                 </connections>
                             </button>
@@ -35,7 +35,7 @@
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
                             <constraint firstItem="HZl-pi-VXh" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="A15-rz-6ES"/>
-                            <constraint firstItem="HZl-pi-VXh" firstAttribute="centerY" secondItem="8bC-Xf-vdC" secondAttribute="centerY" id="v3O-pR-pjX"/>
+                            <constraint firstItem="HZl-pi-VXh" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" constant="128" id="DuK-Yu-k7f"/>
                         </constraints>
                     </view>
                 </viewController>

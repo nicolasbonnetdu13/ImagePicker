@@ -13,6 +13,7 @@
         <scene sceneID="4wM-mE-STT">
             <objects>
                 <navigationController id="2hm-k2-MDT" sceneMemberID="viewController">
+                    <value key="contentSizeForViewInPopover" type="size" width="600" height="600"/>
                     <simulatedNavigationBarMetrics key="simulatedTopBarMetrics" translucent="NO" prompted="NO"/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" translucent="NO" id="i9K-At-5u5">
                         <rect key="frame" x="0.0" y="20" width="375" height="44"/>
