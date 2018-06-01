@@ -48,5 +48,7 @@
 	<string>Need this permission to take a picture</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>Need this permission to select pictures</string>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>Need this permission to save pictures in your photo library</string>
 </dict>
 </plist>

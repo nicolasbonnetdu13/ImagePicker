@@ -233,16 +233,18 @@
                     }
                 case ImagePickerSection.CellType.TakePhoto:
                     {
-                        var controller = new UIViewController();
-                        controller.View.BackgroundColor = UIColor.White;
-                        var navigationController = new UINavigationController(controller);
-                        controller.NavigationItem.LeftBarButtonItem = new UIBarButtonItem("Cancel",
-                                                                                          UIBarButtonItemStyle.Plain,
-                                                                                          (sender, e) =>
-                                                                                          {
-                                                                                              controller.DismissModalViewController(true);
-                                                                                          });
-                        PresentModalViewController(navigationController, true);
+                        CameraHelper.TakePicture(this, (obj) =>
+                        {
+                            var photo = obj.ValueForKey(new NSString("UIImagePickerControllerOriginalImage")) as UIImage;
+                            var meta = obj.ValueForKey(new NSString("UIImagePickerControllerMediaMetadata")) as NSDictionary;
+
+                            // This bit of code saves to the Photo Album with metadata
+                            ALAssetsLibrary library = new ALAssetsLibrary();
+                            library.WriteImageToSavedPhotosAlbum(photo.CGImage, meta, (assetUrl, error) =>
+                            {
+                                Console.WriteLine("assetUrl:" + assetUrl);
+                            });
+                        });
                         break;
                     }
             }

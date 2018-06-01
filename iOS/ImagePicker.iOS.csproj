@@ -64,18 +64,16 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <CodesignKey>iPhone Developer</CodesignKey>
-    <DeviceSpecificBuild>true</DeviceSpecificBuild>
     <MtouchDebug>true</MtouchDebug>
     <MtouchNoSymbolStrip>true</MtouchNoSymbolStrip>
-    <MtouchFastDev>true</MtouchFastDev>
     <MtouchProfiling>true</MtouchProfiling>
-    <MtouchFloat32>true</MtouchFloat32>
-    <CodesignEntitlements>Entitlements.plist</CodesignEntitlements>
     <IOSDebuggerPort>16238</IOSDebuggerPort>
     <MtouchLink>SdkOnly</MtouchLink>
-    <MtouchArch>ARM64</MtouchArch>
+    <MtouchArch>ARMv7, ARMv7s, ARM64</MtouchArch>
     <MtouchHttpClientHandler>HttpClientHandler</MtouchHttpClientHandler>
     <PlatformTarget>x86</PlatformTarget>
+    <BuildIpa>true</BuildIpa>
+    <OptimizePNGs>false</OptimizePNGs>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -156,6 +154,7 @@
     <Compile Include="ImagePicker\Cells\TakePhotoCollectionViewCell.designer.cs">
       <DependentUpon>TakePhotoCollectionViewCell.cs</DependentUpon>
     </Compile>
+    <Compile Include="Helpers\CameraHelper.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />
 </Project>
